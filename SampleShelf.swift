@@ -284,8 +284,9 @@ final class ShelfDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
+        installEditingMenu()
         let model = ShelfModel()
-        panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 520, height: 415),
+        panel = ShelfPanel(contentRect: NSRect(x: 0, y: 0, width: 520, height: 415),
                         styleMask: [.titled, .closable, .utilityWindow, .nonactivatingPanel],
                         backing: .buffered, defer: false)
         panel.title = "Jimbo's Shelf"
@@ -317,6 +318,33 @@ final class ShelfDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         shortcut.onToggle = { [weak self] in self?.toggleShelf() }
         shortcut.start()
         panel.orderFrontRegardless()
+    }
+
+    private func installEditingMenu() {
+        let main = NSMenu()
+        let application = NSMenu()
+        application.addItem(withTitle: "Quit Jimbo’s Shelf",
+                            action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        let appItem = NSMenuItem()
+        appItem.submenu = application
+        main.addItem(appItem)
+
+        let edit = NSMenu(title: "Edit")
+        let commands: [(String, Selector, String)] = [
+            ("Undo", Selector(("undo:")), "z"),
+            ("Redo", Selector(("redo:")), "Z"),
+            ("Cut", #selector(NSText.cut(_:)), "x"),
+            ("Copy", #selector(NSText.copy(_:)), "c"),
+            ("Paste", #selector(NSText.paste(_:)), "v"),
+            ("Select All", #selector(NSText.selectAll(_:)), "a")
+        ]
+        for (title, action, key) in commands {
+            edit.addItem(withTitle: title, action: action, keyEquivalent: key)
+        }
+        let editItem = NSMenuItem(title: "Edit", action: nil, keyEquivalent: "")
+        editItem.submenu = edit
+        main.addItem(editItem)
+        NSApp.mainMenu = main
     }
 
     @objc private func toggleShelf() {
