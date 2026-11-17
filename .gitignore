@@ -1,0 +1,4 @@
+.tools/
+.release-tools/
+.build-deps/
+.DS_Store
