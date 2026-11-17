@@ -65,7 +65,7 @@ enum ShelfTools {
         let formatOptions = format == .mp4
             ? ["-f", "bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4]/bv*+ba/b",
                "--merge-output-format", "mp4", "--recode-video", "mp4",
-               "--postprocessor-args", "VideoConvertor+ffmpeg_o:-c:v h264_videotoolbox -b:v 6M"]
+               "--postprocessor-args", "VideoConvertor+ffmpeg_o:-c:v h264_videotoolbox -allow_sw 1 -b:v 6M"]
             : ["-f", "bestaudio/best", "-x", "--audio-format", format.rawValue, "--audio-quality", "0"]
         task.arguments = ["--ignore-config", "--no-playlist", "--no-progress", "--socket-timeout", "20",
                           "--js-runtimes", "deno:" + deno.path, "--restrict-filenames", "--trim-filenames", "140"]
@@ -111,7 +111,7 @@ enum ShelfTools {
         case .mp3: options = ["-map", "0:a:0", "-vn", "-c:a", "libmp3lame", "-q:a", "0"]
         case .m4a: options = ["-map", "0:a:0", "-vn", "-c:a", "aac", "-b:a", "256k"]
         case .flac: options = ["-map", "0:a:0", "-vn", "-c:a", "flac"]
-        case .mp4: options = ["-map", "0:v:0", "-map", "0:a?", "-c:v", "h264_videotoolbox", "-b:v", "6M", "-pix_fmt", "yuv420p",
+        case .mp4: options = ["-map", "0:v:0", "-map", "0:a?", "-c:v", "h264_videotoolbox", "-allow_sw", "1", "-b:v", "6M", "-pix_fmt", "yuv420p",
                               "-vf", "pad=ceil(iw/2)*2:ceil(ih/2)*2", "-c:a", "aac",
                               "-b:a", "256k", "-movflags", "+faststart"]
         }
